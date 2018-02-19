@@ -1,0 +1,230 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="slick.css" rel="stylesheet" />
+
+    <title>Hello, world!</title>
+
+    <style>
+        h3 {
+            margin: 5px 0;
+        }
+
+        .sliderContainer {
+            position: relative;
+        }
+
+        .slider {
+            width: 100%;
+            margin: 0;
+        }
+
+        .slick-slide {
+            background: #3a8999;
+            color: white;
+            padding: 80px 0 120px;
+            font-size: 30px;
+            font-family: "Arial", "Helvetica";
+            text-align: center;
+        }
+
+        .slick-prev:before,
+        .slick-next:before {
+            color: black;
+        }
+
+        .slick-dots {
+            bottom: -30px;
+        }
+
+        .slick-slide:nth-child(odd) {
+            background: #e84a69;
+        }
+
+        .progressBarContainer {
+            position: absolute;
+            bottom: 20px;
+            width: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+            .progressBarContainer div {
+                display: block;
+                width: 30%;
+                padding: 0;
+                cursor: pointer;
+                margin-right: 5%;
+                float: left;
+                color: white;
+            }
+
+                .progressBarContainer div:last-child {
+                    margin-right: 0;
+                }
+
+                .progressBarContainer div span.progressBar {
+                    width: 100%;
+                    height: 4px;
+                    background-color: rgba(255, 255, 255, 0.4);
+                    display: block;
+                }
+
+                    .progressBarContainer div span.progressBar .inProgress {
+                        background-color: rgba(255, 255, 255, 1);
+                        width: 0%;
+                        height: 4px;
+                    }
+        .inProgress.on{
+            width:100% !important;
+        }
+    </style>
+
+
+</head>
+<body>
+
+    <div class="sliderContainer">
+        <div class="slider single-item">
+            <div>Slide1</div>
+            <div>Slide2</div>
+            <div>Slide3</div>
+        </div>
+        <div class="progressBarContainer">
+            <div>
+
+                <span data-slick-index="0" class="progressBar"></span>
+            </div>
+            <div>
+
+                <span data-slick-index="1" class="progressBar"></span>
+            </div>
+            <div>
+
+                <span data-slick-index="2" class="progressBar"></span>
+            </div>
+        </div>
+    </div>
+
+
+    <span class="pagingInfo"></span>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="slick.js"></script>
+
+    <script>
+        $(".slider").slick({
+            infinite: true,
+            arrows: false,
+            dots: false,
+            autoplay: false,
+            speed: 500,
+            slidesToShow: 1,
+            slidesToScroll: 1
+        });
+
+        //ticking machine
+        var percentTime;
+        var tick;
+        var time = 1;
+        var progressBarIndex = 0;
+
+        var progress = $('.inProgress');
+
+        $('.progressBarContainer .progressBar').each(function (index) {
+            var progress = "<div class='inProgress inProgress" + index + "'></div>";
+            $(this).html(progress);
+        });
+
+        function startProgressbar() {
+            resetProgressbar();
+            percentTime = 0;
+            tick = setInterval(interval, 10);
+        }
+
+        function interval() {
+            if (($('.slider .slick-track div[data-slick-index="' + progressBarIndex + '"]').attr("aria-hidden")) === "true") {
+                progressBarIndex = $('.slider .slick-track div[aria-hidden="false"]').data("slickIndex");
+
+                console.log(progressBarIndex);
+
+                if (progressBarIndex == 1) {
+                    $(".inProgress0").addClass('on');
+                    $(".inProgress1").removeClass('on');
+                }
+                else if (progressBarIndex == 2) {
+                    $(".inProgress0").addClass('on');
+                    $(".inProgress1").addClass('on');
+                }
+                else if (progressBarIndex == 0) {
+                    $(".inProgress0").removeClass('on');
+                    $(".inProgress1").removeClass('on');
+                }
+                startProgressbar();
+
+            } else {
+                percentTime += 1 / (time + 2);
+                $('.inProgress' + progressBarIndex).css({
+                    width: percentTime + "%"
+                });
+                if (percentTime >= 100) {
+                    $('.single-item').slick('slickNext');
+
+                    //console.log(progressBarIndex);
+
+                    if (progressBarIndex == 0) {
+                        $(".inProgress0").addClass('on');
+                        
+                    }
+                    else if (progressBarIndex == 1) {
+                        $(".inProgress0").addClass('on');
+                        $(".inProgress1").addClass('on');
+                    }
+                    else if (progressBarIndex == 2) {
+                        $(".inProgress0").removeClass('on');
+                        $(".inProgress1").removeClass('on');
+                    }
+
+                    progressBarIndex++;
+
+                    if (progressBarIndex > 2) {
+                        progressBarIndex = 0;
+                    }
+                    startProgressbar();
+                    
+
+                }
+
+            }
+        }
+
+        function resetProgressbar() {
+            $('.inProgress').css({
+                width: 0 + '%'
+            });
+            clearInterval(tick);
+        }
+        startProgressbar();
+        // End ticking machine
+
+        $('.progressBarContainer div').click(function () {
+            clearInterval(tick);
+            var goToThisIndex = $(this).find("span").data("slickIndex");
+            $('.single-item').slick('slickGoTo', goToThisIndex, false);
+            startProgressbar();
+        });
+        
+
+    </script>
+</body>
+</html>
